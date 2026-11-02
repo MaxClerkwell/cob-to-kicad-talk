@@ -1,0 +1,366 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage{tikz}
+\usepackage{qrcode}
+\usepackage{fontawesome5}
+\usepackage{booktabs}
+\usepackage{listings}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, fit, calc}
+
+% ---------- look ----------
+\definecolor{cobgold}{HTML}{B8860B}
+\definecolor{cobblue}{HTML}{1F4E79}
+\definecolor{cobgrey}{HTML}{555555}
+\definecolor{cobgreen}{HTML}{2E7D32}
+\definecolor{cobred}{HTML}{B3261E}
+
+\usetheme{default}
+\usecolortheme{default}
+\setbeamercolor{structure}{fg=cobblue}
+\setbeamercolor{title}{fg=cobblue}
+\setbeamercolor{frametitle}{fg=cobblue}
+\setbeamercolor{block title}{bg=cobblue!12, fg=cobblue}
+\setbeamercolor{block body}{bg=cobblue!4}
+\setbeamercolor{block title alerted}{bg=cobgold!20, fg=black}
+\setbeamercolor{block body alerted}{bg=cobgold!8}
+\setbeamercolor{block title example}{bg=cobgreen!15, fg=black}
+\setbeamercolor{block body example}{bg=cobgreen!5}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamerfont{frametitle}{series=\bfseries, size=\Large}
+\setbeamertemplate{footline}{%
+  \hfill\usebeamercolor[fg]{footline}\scriptsize\color{cobgrey}%
+  CoB to KiCad\quad\insertframenumber/\inserttotalframenumber\hspace{1em}\vspace{0.6em}}
+
+\lstset{basicstyle=\ttfamily\scriptsize, columns=fullflexible, keepspaces=true,
+  frame=single, rulecolor=\color{cobblue!40}, backgroundcolor=\color{cobblue!3}}
+
+\newcommand{\hl}[1]{{\color{cobgold}\textbf{#1}}}
+
+% ---------- metadata ----------
+\title{CoB to KiCad Integration}
+\subtitle{Understanding and solving the challenges of accelerated chip fabrication}
+\author{Stephan Bökelmann}
+\institute{\texttt{maxclerkwell.tech}}
+\date{\today}
+
+\begin{document}
+
+% ======================================================================
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+% ======================================================================
+\begin{frame}{Chip design has opened up}
+  \begin{columns}[T]
+    \column{0.32\textwidth}
+      \begin{block}{More open}
+        Open PDKs and an open toolchain: \textbf{OpenROAD}, Yosys, KLayout, Magic, ngspice.\\[0.6em]
+        \small Pioneered by people like \textbf{Tim Ansell}.
+      \end{block}
+    \column{0.32\textwidth}
+      \begin{block}{More accessible}
+        Courses that take you from zero to taped-out silicon.\\[0.6em]
+        \small \textbf{Matthew Venn}: \textbf{Tiny Tapeout} and his courses.
+      \end{block}
+    \column{0.32\textwidth}
+      \begin{block}{More affordable}
+        Real silicon, real dies, on a hobbyist and university budget.\\[0.6em]
+        \small \textbf{wafer.space}, with \textbf{Stuart Childs}.
+      \end{block}
+  \end{columns}
+  \vfill
+  \begin{center}
+    \Large Designing a chip is no longer the hard part.\\
+    \color{cobgrey}\normalsize Getting the bare dies onto a board is.
+  \end{center}
+  \vfill
+\end{frame}
+
+% ======================================================================
+\begin{frame}{What are ICs, and what can you describe?}
+  \centering
+  \begin{tikzpicture}[
+      box/.style={draw=cobblue, rounded corners=2pt, fill=cobblue!6, align=center,
+                  minimum height=0.9cm, text width=2.5cm, font=\small},
+      lane/.style={font=\bfseries\color{cobblue}, anchor=east},
+      arr/.style={-{Stealth[length=2mm]}, thick, color=cobgrey},
+      node distance=0.55cm]
+    % digital
+    \node[lane] (dl) at (0,1.9) {Digital};
+    \node[box, right=0.3cm of dl] (v) {Verilog\\RTL};
+    \node[box, right=of v] (syn) {Synthesis\\(Yosys)};
+    \node[box, right=of syn] (pnr) {Place \& route\\(OpenROAD)};
+    \node[box, right=of pnr, fill=cobgold!25, draw=cobgold] (gds1) {GDS / OASIS};
+    \draw[arr] (v)--(syn); \draw[arr] (syn)--(pnr); \draw[arr] (pnr)--(gds1);
+    % analog
+    \node[lane] (al) at (0,0) {Analog};
+    \node[box, right=0.3cm of al] (xs) {Schematic\\(xschem)};
+    \node[box, right=of xs] (sim) {Simulation\\(ngspice)};
+    \node[box, right=of sim] (lay) {Layout\\(Magic / KLayout)};
+    \node[box, right=of lay, fill=cobgold!25, draw=cobgold] (gds2) {GDS / OASIS};
+    \draw[arr] (xs)--(sim); \draw[arr] (sim)--(lay); \draw[arr] (lay)--(gds2);
+    % mixed
+    \node[draw=cobgreen, fill=cobgreen!8, rounded corners=2pt, text width=11.2cm, align=center,
+          below=0.8cm of lay, xshift=-1.6cm, font=\small]
+      {\textbf{Mixed-signal ASICs:} both on one die. Sensor front end next to digital readout,
+       amplifier next to state machine.};
+  \end{tikzpicture}
+  \vfill
+  \small Every path ends in the same artefact: \hl{a layout file}. That is where the physical truth lives.
+\end{frame}
+
+% ======================================================================
+\begin{frame}{Terminology}
+  \begin{columns}[T]
+    \column{0.55\textwidth}
+      \small
+      \begin{description}\setlength\itemsep{0.3em}
+        \item[Reticle] The exposure field of the lithography step. A shuttle run packs many
+          projects into one reticle.
+        \item[Die] One diced piece of silicon: your chip, bare, without any housing.
+        \item[Metallization] The top metal layers. They define what a wire can be bonded to
+          and which wire material, force and temperature work.
+        \item[Pad] An opening in the passivation where the die talks to the outside world.
+        \item[Bonding] Connecting die pads to board pads with thin wires (wedge or ball).
+      \end{description}
+    \column{0.42\textwidth}
+      \centering
+      \begin{tikzpicture}[scale=0.62]
+        % reticle
+        \draw[thick, cobblue, fill=cobblue!5] (0,0) rectangle (5,4.2);
+        \foreach \x in {0,1,2,3} \foreach \y in {0,1,2} {
+          \draw[cobblue!60, fill=white] (0.25+1.1*\x, 0.25+1.2*\y) rectangle ++(1,1.1);
+        }
+        \fill[cobgold!40] (0.25+1.1*2, 0.25+1.2*1) rectangle ++(1,1.1);
+        \node[font=\scriptsize\bfseries, color=cobblue] at (2.5,4.0) {reticle};
+        \draw[-{Stealth}, cobgrey] (4.9,1.2) -- ++(0.0,-0.0);
+        % zoom on die
+        \begin{scope}[shift={(0.4,-3.7)}]
+          \draw[thick, cobgold, fill=cobgold!25] (0,0) rectangle (4,3);
+          \foreach \i in {0,...,6} {
+            \fill[cobgrey] (0.3+0.55*\i,2.7) rectangle ++(0.3,0.2);
+            \fill[cobgrey] (0.3+0.55*\i,0.1) rectangle ++(0.3,0.2);
+          }
+          \foreach \i in {0,...,3} {
+            \fill[cobgrey] (0.1,0.6+0.55*\i) rectangle ++(0.2,0.3);
+            \fill[cobgrey] (3.7,0.6+0.55*\i) rectangle ++(0.2,0.3);
+          }
+          \node[font=\scriptsize\bfseries] at (2,1.5) {die};
+          \node[font=\scriptsize, color=cobgrey, anchor=west] at (4.1,2.8) {pads};
+        \end{scope}
+      \end{tikzpicture}
+  \end{columns}
+\end{frame}
+
+% ======================================================================
+\begin{frame}{Packaged vs.\ Chip-on-Board}
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+      \begin{block}{Packaged}
+        \centering
+        \begin{tikzpicture}[scale=0.8]
+          \draw[fill=black!75] (0,0.4) rectangle (4,1.6);
+          \draw[fill=cobgold!40] (1.2,0.8) rectangle (2.8,1.2);
+          \foreach \x in {0.2,0.7,...,3.7} {\draw[thick, cobgrey] (\x,0.4)--(\x,0);}
+          \draw[fill=cobgreen!40] (-0.5,-0.2) rectangle (4.5,0);
+        \end{tikzpicture}\\[0.4em]
+        \raggedright
+        \begin{itemize}\setlength\itemsep{0.2em}
+          \item Standard footprint (QFN, QFP, \dots), solder it and done
+          \item Package costs money and lead time
+          \item Package adds inductance and size
+          \item The pinout is fixed by the package
+        \end{itemize}
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{alertblock}{Chip-on-Board}
+        \centering
+        \begin{tikzpicture}[scale=0.8]
+          \draw[fill=cobgreen!40] (-0.5,0) rectangle (4.5,0.3);
+          \draw[fill=cobgold!40] (1.2,0.3) rectangle (2.8,0.6);
+          \foreach \x/\y in {1.4/0.5, 1.9/0.5, 2.4/0.5} {}
+          \draw[thick, cobblue] (1.3,0.6) .. controls (0.9,1.1) .. (0.4,0.3);
+          \draw[thick, cobblue] (2.7,0.6) .. controls (3.1,1.1) .. (3.6,0.3);
+          \fill[cobgrey] (0.2,0.3) rectangle (0.6,0.35);
+          \fill[cobgrey] (3.4,0.3) rectangle (3.8,0.35);
+          \draw[fill=black!10, opacity=0.4] (0.9,0.3) -- (1.2,0.9) -- (2.8,0.9) -- (3.1,0.3);
+        \end{tikzpicture}\\[0.4em]
+        \raggedright
+        \begin{itemize}\setlength\itemsep{0.2em}
+          \item Bare die glued onto the PCB, wires bonded to board pads
+          \item No package: cheaper, smaller, shorter wires
+          \item Direct access to special pads, probe points, sensors
+          \item \textbf{But: no standard footprint}. You design it for each chip.
+        \end{itemize}
+      \end{alertblock}
+  \end{columns}
+  \vfill
+  \centering\small\color{cobgrey} A 2~mm die on a PCB: the wires fan out from the chip edge to bond fingers.
+\end{frame}
+
+% ======================================================================
+\begin{frame}{What I did so far}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.62\textwidth}
+      \begin{itemize}\setlength\itemsep{0.8em}
+        \item Characterizing \textbf{mixed-signal ASICs} of the \textbf{HVMAPS} type\\
+          {\small High-voltage monolithic active pixel sensors for particle detectors}
+        \item Sensor, analog front end and digital readout on a single die
+        \item Many chip iterations, each one bonded to a new board
+        \item Worked at \textbf{Ruhr University Bochum}\\
+          {\small Chair of Experimental Physics I}
+        \item Now transferring to \textbf{FAIR}\\
+          {\small Facility for Antiproton and Ion Research, Darmstadt}
+      \end{itemize}
+    \column{0.34\textwidth}
+      \centering
+      \includegraphics[height=0.62\textheight]{images/die-on-board.jpg}\\[0.2em]
+      {\scriptsize\color{cobgrey} A bare die glued onto a PCB, wires fanning out to bond fingers}
+  \end{columns}
+\end{frame}
+
+% ======================================================================
+\begin{frame}{How do we make a PCB for CoB?}
+  \begin{columns}[T]
+    \column{0.52\textwidth}
+      \small
+      \begin{itemize}\setlength\itemsep{0.3em}
+        \item Which chip pad goes to which board pad?
+        \item How long may a wire become?
+        \item Where do cutouts, keepouts and courtyards go?
+        \item \textbf{Pad layout}: pitch, angle, stagger, ground bonds, probe pads
+        \item \textbf{New chip iteration = new footprint}. Every time.
+      \end{itemize}
+      \vspace{0.6em}
+      \begin{alertblock}{Bottom line}
+        There is no canonical exchange format for chip-to-PCB integration yet.
+      \end{alertblock}
+      \begin{exampleblock}{Silver lining}
+        All the data is already in the \textbf{GDS / OASIS} file.
+      \end{exampleblock}
+    \column{0.44\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/legacy-bonding-plan-example.jpg}\\[0.2em]
+      {\scriptsize\color{cobgrey} Today: a bonding plan as a presentation slide.\\
+       Not machine-readable, drifts out of sync.}
+  \end{columns}
+\end{frame}
+
+% ======================================================================
+\begin{frame}[fragile]{open.cob.json: one file between chip and PCB designer}
+  \begin{columns}[T]
+    \column{0.5\textwidth}
+      One file describes everything CoB integration needs:
+      \begin{itemize}\setlength\itemsep{0.3em}
+        \item \texttt{die}: size, notch, chip pads (from the GDS)
+        \item \texttt{pcb}: pad shapes and pads, cutouts, fiducials
+        \item \texttt{wires}: which die pad to which board pad, material, loop
+        \item \texttt{assembly}: die attach, bonding sequence
+        \item \texttt{tolerances}, \texttt{units}, \texttt{meta}
+      \end{itemize}
+      \vspace{0.5em}
+      \begin{alertblock}{Bottom line}
+        The demo chip with 9 pads is already \textbf{1300 lines} of JSON.
+        Hard to edit by hand.
+      \end{alertblock}
+    \column{0.47\textwidth}
+\begin{lstlisting}
+{
+  "schema": "open.cob.json/...",
+  "meta":   { "name": "OCJ-DEMO1", ... },
+  "units":  { "length": "um", ... },
+  "die": {
+    "size": [ 2000, 2000 ],
+    "notch": { ... },
+    "pads": [ { "name": "VDD",
+                "center": [ -800, 950 ] }, ... ]
+  },
+  "pcb":   { "shapes": {...}, "pads": [...] },
+  "wires": { "items": [ ... ] },
+  "assembly": { "die_attach": {...},
+                "wire_bond": {...} }
+}
+\end{lstlisting}
+  \end{columns}
+\end{frame}
+
+% ======================================================================
+\begin{frame}{What did I want to build?}
+  \centering
+  \vspace{0.4cm}
+  \begin{tikzpicture}[
+      box/.style={draw=cobblue, rounded corners=3pt, fill=cobblue!6, align=center,
+                  minimum height=1.5cm, text width=3cm},
+      arr/.style={-{Stealth[length=3mm]}, very thick, color=cobgrey}]
+    \node[box, fill=cobgold!25, draw=cobgold] (g) {Layout\\\small GDS / OASIS};
+    \node[box, right=1.6cm of g] (c) {Chip pads\\\small positions, metal, size};
+    \node[box, right=1.6cm of c, fill=cobgreen!15, draw=cobgreen] (k) {First footprint\\\small in KiCad};
+    \draw[arr] (g)--(c); \draw[arr] (c)--(k);
+  \end{tikzpicture}
+  \vspace{0.8cm}
+
+  \begin{itemize}\setlength\itemsep{0.6em}
+    \item A tool that gives me a \textbf{first footprint} for a new chip, in minutes instead of days
+    \item \textbf{Directly exported to KiCad}: symbol, footprint, no redrawing
+    \item I only fix what is chip-specific. The tool does the geometry.
+  \end{itemize}
+\end{frame}
+
+% ======================================================================
+\begin{frame}{What does the open.cob workflow already do?}
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+      \begin{description}\setlength\itemsep{0.35em}
+        \item[\texttt{cobtestdata}] fetches the manufactured wafer.space reticles as test input
+        \item[\texttt{cobgen}] GDSII / OASIS $\to$ \texttt{die} block
+        \item[\texttt{cobedit}] place PCB pads from a shape catalog
+        \item[\texttt{cobviz}] render the bonding plan as SVG
+        \item[\texttt{cobkicad}] KiCad 9/10 symbol and footprint
+      \end{description}
+      \vspace{0.4em}
+      \small Work in progress. Wires are still written by hand.\\
+      \texttt{github.com/MaxClerkwell/open.cob.json}
+    \column{0.5\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/cobedit-screenshot.png}\\[0.2em]
+      {\scriptsize\color{cobgrey} \texttt{cobedit} with the fictional demo chip}
+  \end{columns}
+\end{frame}
+
+% ======================================================================
+\begin{frame}{About me}
+  \begin{columns}[c]
+    \column{0.25\textwidth}
+      \centering
+      \IfFileExists{images/portrait.jpg}{%
+        \includegraphics[width=\textwidth]{images/portrait.jpg}%
+      }{%
+        \fbox{\parbox[c][4.2cm][c]{0.9\textwidth}{\centering\color{cobgrey}\faUser\\[0.3em]\small
+          add \texttt{images/portrait.jpg}}}%
+      }
+    \column{0.45\textwidth}
+      {\Large\textbf{Stephan Bökelmann}}\\[0.5em]
+      Mixed-signal ASIC characterization,\\
+      CoB integration, open-source EDA.\\[1em]
+      \begin{alertblock}{Free for contract work}
+        Onboarding with \textbf{your first chip}:\\
+        from the layout to the bonded board.
+      \end{alertblock}
+      \vspace{0.3em}
+      \small
+      \faGlobe\ maxclerkwell.tech\\
+      \faGithub\ MaxClerkwell
+    \column{0.25\textwidth}
+      \centering
+      \qrcode[height=3.4cm]{https://maxclerkwell.tech}\\[0.3em]
+      {\scriptsize\color{cobgrey} maxclerkwell.tech}
+  \end{columns}
+\end{frame}
+
+\end{document}
