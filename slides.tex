@@ -96,10 +96,10 @@
   \centering
   \begin{tikzpicture}[
       box/.style={draw=cobblue, rounded corners=2pt, fill=cobblue!6, align=center,
-                  minimum height=0.9cm, text width=2.5cm, font=\small},
+                  minimum height=0.9cm, text width=2.2cm, font=\small},
       lane/.style={font=\bfseries\color{cobblue}, anchor=east},
       arr/.style={-{Stealth[length=2mm]}, thick, color=cobgrey},
-      node distance=0.55cm]
+      node distance=0.45cm]
     % digital
     \node[lane] (dl) at (0,1.9) {Digital};
     \node[box, right=0.3cm of dl] (v) {Verilog\\RTL};
@@ -238,15 +238,15 @@
 \begin{frame}{How do we make a PCB for CoB?}
   \begin{columns}[T]
     \column{0.52\textwidth}
-      \small
-      \begin{itemize}\setlength\itemsep{0.3em}
+      \footnotesize
+      \begin{itemize}\setlength\itemsep{0.15em}
         \item Which chip pad goes to which board pad?
         \item How long may a wire become?
         \item Where do cutouts, keepouts and courtyards go?
         \item \textbf{Pad layout}: pitch, angle, stagger, ground bonds, probe pads
         \item \textbf{New chip iteration = new footprint}. Every time.
       \end{itemize}
-      \vspace{0.6em}
+      \vspace{0.1em}
       \begin{alertblock}{Bottom line}
         There is no canonical exchange format for chip-to-PCB integration yet.
       \end{alertblock}
@@ -265,6 +265,7 @@
 \begin{frame}[fragile]{open.cob.json: one file between chip and PCB designer}
   \begin{columns}[T]
     \column{0.5\textwidth}
+      \small
       One file describes everything CoB integration needs:
       \begin{itemize}\setlength\itemsep{0.3em}
         \item \texttt{die}: size, notch, chip pads (from the GDS)
@@ -273,7 +274,7 @@
         \item \texttt{assembly}: die attach, bonding sequence
         \item \texttt{tolerances}, \texttt{units}, \texttt{meta}
       \end{itemize}
-      \vspace{0.5em}
+      \vspace{0.1em}
       \begin{alertblock}{Bottom line}
         The demo chip with 9 pads is already \textbf{1300 lines} of JSON.
         Hard to edit by hand.
@@ -281,19 +282,20 @@
     \column{0.47\textwidth}
 \begin{lstlisting}
 {
-  "schema": "open.cob.json/...",
-  "meta":   { "name": "OCJ-DEMO1", ... },
-  "units":  { "length": "um", ... },
+  "schema": "cob.v1",
+  "meta":   { "name": "OCJ-DEMO1" },
+  "units":  { "length": "mm" },
   "die": {
-    "size": [ 2000, 2000 ],
-    "notch": { ... },
-    "pads": [ { "name": "VDD",
-                "center": [ -800, 950 ] }, ... ]
+    "size": [ 2.0, 2.0 ],
+    "pads": [
+      { "id": "D1", "name": "VDD",
+        "center": [ -0.8, 0.9 ] },
+      ... ]
   },
-  "pcb":   { "shapes": {...}, "pads": [...] },
+  "pcb":   { "shapes": {...},
+             "pads": [...] },
   "wires": { "items": [ ... ] },
-  "assembly": { "die_attach": {...},
-                "wire_bond": {...} }
+  "assembly": { ... }
 }
 \end{lstlisting}
   \end{columns}
@@ -326,12 +328,12 @@
   \centering
   \begin{tikzpicture}[
       box/.style={draw=cobblue, rounded corners=2pt, fill=cobblue!6, align=center,
-                  minimum height=1.0cm, text width=2.35cm, font=\scriptsize},
+                  minimum height=1.3cm, text width=1.9cm, font=\scriptsize},
       arr/.style={-{Stealth[length=2mm]}, thick, color=cobgrey},
-      node distance=0.5cm]
+      node distance=0.3cm]
     \node[box, fill=cobgold!25, draw=cobgold] (a) {GDSII / OASIS\\ \texttt{gdstk}};
     \node[box, right=of a] (b) {Top cell\\ bounding box\\ $=$ die size};
-    \node[box, right=of b] (c) {Flatten, take\\ passivation openings\\ (PDK pad layer)};
+    \node[box, right=of b] (c) {Flatten, take\\ passivation\\ openings\\ (pad layer)};
     \node[box, right=of c] (d) {Filter: min.\ size,\\ aspect ratio $\le 4$};
     \node[box, right=of d, fill=cobgreen!15, draw=cobgreen] (e) {\texttt{die} block\\ of the\\ \texttt{.cob.json}};
     \draw[arr] (a)--(b); \draw[arr] (b)--(c); \draw[arr] (c)--(d); \draw[arr] (d)--(e);
@@ -341,7 +343,7 @@
   \footnotesize
   \begin{columns}[T]
     \column{0.55\textwidth}
-      \begin{tabular}{@{}p{2.6cm}p{5.2cm}@{}}
+      \begin{tabular}{@{}p{2.3cm}p{4.2cm}@{}}
         \toprule
         \textbf{Field} & \textbf{Source in the layout}\\
         \midrule
@@ -528,7 +530,7 @@ fp.write("open_cob.pretty")
       \end{description}
       \vspace{0.4em}
       \small Work in progress. \texttt{cobasm} (assembly) is not implemented yet.\\
-      \texttt{github.com/MaxClerkwell/open.cob.json}
+      {\scriptsize\texttt{github.com/MaxClerkwell/open.cob.json}}
     \column{0.5\textwidth}
       \centering
       \includegraphics[width=\textwidth]{images/cobedit-screenshot.png}\\[0.2em]
