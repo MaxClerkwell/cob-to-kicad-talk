@@ -320,6 +320,142 @@
 \end{frame}
 
 % ======================================================================
+\begin{frame}{Step 1: extract the die from the layout (\texttt{cobgen})}
+  \centering
+  \begin{tikzpicture}[
+      box/.style={draw=cobblue, rounded corners=2pt, fill=cobblue!6, align=center,
+                  minimum height=1.0cm, text width=2.35cm, font=\scriptsize},
+      arr/.style={-{Stealth[length=2mm]}, thick, color=cobgrey},
+      node distance=0.5cm]
+    \node[box, fill=cobgold!25, draw=cobgold] (a) {GDSII / OASIS\\ \texttt{gdstk}};
+    \node[box, right=of a] (b) {Top cell\\ bounding box\\ $=$ die size};
+    \node[box, right=of b] (c) {Flatten, take\\ passivation openings\\ (PDK pad layer)};
+    \node[box, right=of c] (d) {Filter: min.\ size,\\ aspect ratio $\le 4$};
+    \node[box, right=of d, fill=cobgreen!15, draw=cobgreen] (e) {\texttt{die} block\\ of the\\ \texttt{.cob.json}};
+    \draw[arr] (a)--(b); \draw[arr] (b)--(c); \draw[arr] (c)--(d); \draw[arr] (d)--(e);
+  \end{tikzpicture}
+  \vspace{0.3cm}
+
+  \footnotesize
+  \begin{columns}[T]
+    \column{0.55\textwidth}
+      \begin{tabular}{@{}p{2.6cm}p{5.2cm}@{}}
+        \toprule
+        \textbf{Field} & \textbf{Source in the layout}\\
+        \midrule
+        \texttt{size} & bounding box of the top cell\\
+        \texttt{center, size} & opening polygon on the pad layer\\
+        \texttt{name} & text label inside the opening\\
+        \texttt{electrical} & I/O cell that contains the opening\\
+        \texttt{side} & nearest die edge\\
+        \texttt{metal} & PDK table\\
+        \bottomrule
+      \end{tabular}
+    \column{0.42\textwidth}
+      \begin{itemize}\setlength\itemsep{0.25em}
+        \item Pads numbered \texttt{D1..Dn}, counter-clockwise from bottom left
+        \item Coordinates in mm, origin at the die center, Y up
+        \item The PDK table is tiny: pad layer, label layer, metal, min.\ size, cell name $\to$ pin type (\texttt{gf180mcu}, \texttt{sky130})
+        \item What a layout cannot know is written \texttt{"unspecified"}
+      \end{itemize}
+  \end{columns}
+  \vfill
+  {\scriptsize\color{cobgrey} Tested on the wafer.space gf180mcu example: 56 pads, 52 labeled.}
+\end{frame}
+
+% ======================================================================
+\begin{frame}[fragile]{Step 2: how the data is formatted in JSON}
+  \footnotesize
+  \begin{columns}[T]
+    \column{0.43\textwidth}
+      \begin{description}\setlength\itemsep{0.3em}
+        \item[\texttt{die}] the chip: size, notch, pads. \hl{filled by \texttt{cobgen}}
+        \item[\texttt{pcb}] shapes, pads, misc (mask, cutout, keepout, fiducial)
+        \item[\texttt{wires}] die pad $\to$ PCB pad, type, loop, bond, tests
+        \item[\texttt{assembly}] die attach, bonding, tempering, sequence
+      \end{description}
+      \vspace{0.2em}
+      \textbf{Rules}
+      \begin{itemize}\setlength\itemsep{0.15em}
+        \item One file = one delivered die (UUID)
+        \item One origin: die center, mm, Y up
+        \item \texttt{"none"} = deliberately absent, \texttt{"unspecified"} = not known yet
+        \item Land patterns: reusable \texttt{*.shape.cob.json}, referenced by UUID, then scaled, rotated, placed
+      \end{itemize}
+    \column{0.55\textwidth}
+\begin{lstlisting}
+"die": { "pads": [ {
+  "id": "D1", "name": "CLK",
+  "center": [-0.2, 0.72], "size": [0.08, 0.08],
+  "metal": "Al", "side": "top",
+  "electrical": "input" } ] },
+
+"pcb": {
+  "shapes": { "FINGER": "27c699bd-b041-..." },
+  "pads": [ {
+    "id": "P1", "number": "1", "name": "CLK",
+    "shape": "FINGER", "at": [-0.4, 1.45],
+    "rotation": 90, "finish": "ENIG" } ] },
+
+"wires": { "items": [ {
+  "id": "W1",
+  "from": { "die_pad": "D1" },
+  "to":   { "pcb_pad": "P1" },
+  "type": "wedge", "diameter_um": 25,
+  "loop": { "height": { "nom": 0.25,
+                        "tol": 0.05 } } } ] }
+\end{lstlisting}
+  \end{columns}
+\end{frame}
+
+% ======================================================================
+\begin{frame}[fragile]{Step 3: from JSON to a KiCad footprint (\texttt{cobkicad})}
+  \centering
+  \begin{tikzpicture}[
+      box/.style={draw=cobblue, rounded corners=2pt, fill=cobblue!6, align=center,
+                  minimum height=1.0cm, text width=2.5cm, font=\scriptsize},
+      arr/.style={-{Stealth[length=2mm]}, thick, color=cobgrey},
+      node distance=0.5cm]
+    \node[box, fill=cobgold!25, draw=cobgold] (a) {\texttt{.cob.json}\\ + shape catalog};
+    \node[box, right=of a] (b) {Place each shape:\\ scale, rotate,\\ move to \texttt{at}};
+    \node[box, right=of b] (c) {Flip Y\\ (KiCad: Y down)};
+    \node[box, right=of c, fill=cobgreen!15, draw=cobgreen] (d) {\texttt{.kicad\_mod}\\ \texttt{.kicad\_sym}};
+    \draw[arr] (a)--(b); \draw[arr] (b)--(c); \draw[arr] (c)--(d);
+  \end{tikzpicture}
+  \vspace{0.2cm}
+
+  \footnotesize
+  \begin{columns}[T]
+    \column{0.58\textwidth}
+      \begin{tabular}{@{}p{3.3cm}p{4.3cm}@{}}
+        \toprule
+        \textbf{\texttt{.cob.json}} & \textbf{KiCad}\\
+        \midrule
+        die outline, pads & polygons on \texttt{F.SilkS}\\
+        \texttt{pcb.pads} copper & custom SMD pad on \texttt{F.Cu}\\
+        \texttt{pcb.pads} mask & polygon on \texttt{F.Mask}\\
+        \texttt{misc}: keepout & rule area\\
+        \texttt{misc}: cutout & \texttt{Edge.Cuts}\\
+        \texttt{wires.items} & lines on \texttt{Dwgs.User}\\
+        die pad \texttt{electrical} & symbol pin type\\
+        \bottomrule
+      \end{tabular}
+    \column{0.4\textwidth}
+\begin{lstlisting}[basicstyle=\ttfamily\tiny]
+cd tools/cobkicad
+uv run cobkicad \
+  --file <uuid>.cob.json \
+  --out ./out
+\end{lstlisting}
+      \begin{itemize}\setlength\itemsep{0.2em}
+        \item Writes a \texttt{.kicad\_sym} symbol library and a \texttt{.pretty} footprint library
+        \item Add both as libraries in KiCad 9 or 10, place symbol and footprint
+        \item One symbol pin per PCB pad, footprint carries the die, the wires and the keepouts
+      \end{itemize}
+  \end{columns}
+\end{frame}
+
+% ======================================================================
 \begin{frame}{What does the open.cob workflow already do?}
   \begin{columns}[T]
     \column{0.48\textwidth}
