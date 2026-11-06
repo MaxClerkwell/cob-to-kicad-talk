@@ -376,18 +376,14 @@
     Every pad is a rectangle
       & Round or octagonal openings become boxes, so the footprint is only approximate
       & \hl{Easy, just not implemented yet.} The opening polygon is already read, it only has to be stored in the file and drawn\\
-    \addlinespace[0.15em]
-    Layers and cell names come from a table per PDK
-      & \texttt{gf180mcu} works, \texttt{sky130} is untested, other PDKs find no pads
-      & No standard: every foundry numbers layers and names I/O cells differently, some documents are under NDA. Someone who knows the PDK writes each table\\
-    \addlinespace[0.15em]
-    Names only from text labels
+    \addlinespace[0.3em]
+    One table per PDK: pad layer, label layer, I/O cell name $\to$ pin type
+      & \texttt{gf180mcu} works, \texttt{sky130} is untested, other PDKs find no pads or no pin types
+      & \textbf{Open PDKs:} look up the layer map, add an entry. \textbf{Closed PDKs:} layer numbers are under NDA, the chip designer must supply them (no option for that yet). Cell names need PDK knowledge\\
+    \addlinespace[0.3em]
+    Names and pin types are not in the layout
       & Unlabeled pads stay \texttt{"unspecified"} (4 of 56 in the example)
-      & A layout has no connectivity. The true name lives in the netlist, so it needs a second input and a matching step\\
-    \addlinespace[0.15em]
-    Pin type guessed from the cell name
-      & Wrong or missing pin types in the KiCad symbol
-      & The type is design intent, not geometry. Name fragments are a heuristic, custom pad cells break it\\
+      & A layout has no connectivity or design intent. Name and type live in the netlist, so it needs a second input and a matching step\\
     \bottomrule
   \end{tabular}
   \vspace{0.1em}
