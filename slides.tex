@@ -483,6 +483,42 @@ uv run cobkicad \
 \end{frame}
 
 % ======================================================================
+\begin{frame}[fragile]{How the KiCad files are written, and where this goes}
+  \footnotesize
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+      \begin{block}{Today}
+        s-expressions written \textbf{directly as text}, with a 25-line helper for quoting, numbers and UUIDs.\\[0.3em]
+        \hl{Why:} it was the fastest way to a first footprint, and it needs no dependency.
+      \end{block}
+      \begin{alertblock}{Cost}
+        KiCad does not check the result. The Y flip, UUIDs and layer names are spread over many format strings.
+      \end{alertblock}
+      \begin{exampleblock}{Next step}
+        Use an \textbf{s-expression library} instead of strings, then verify with \texttt{kicad-cli}.
+      \end{exampleblock}
+    \column{0.5\textwidth}
+      \textbf{Wish: an object API}
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+fp = Footprint("COB_OCJ-DEMO1")
+fp.add_die(size, notch, pads)
+fp.add_pad("1", "CLK",
+           copper=polys, mask=mask,
+           at=(-0.4, 1.45))
+fp.add_keepout(poly, forbids=["via"])
+fp.add_wire(die_pad, bond_target)
+fp.write("open_cob.pretty")
+\end{lstlisting}
+      \begin{itemize}\setlength\itemsep{0.15em}
+        \item Thin classes (\texttt{Footprint}, \texttt{Symbol}), each item knows how to become an s-expression tree
+        \item One serializer, one place for the Y flip and UUIDs
+        \item Same idea for symbols: \texttt{add\_pin()}
+        \item Candidate backend: a typed library such as \texttt{kiutils}, to be evaluated
+      \end{itemize}
+  \end{columns}
+\end{frame}
+
+% ======================================================================
 \begin{frame}{What does the open.cob workflow already do?}
   \begin{columns}[T]
     \column{0.48\textwidth}
