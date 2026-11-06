@@ -39,8 +39,7 @@
 \lstset{basicstyle=\ttfamily\scriptsize, columns=fullflexible, keepspaces=true,
   frame=single, rulecolor=\color{cobblue!40}, backgroundcolor=\color{cobblue!3}}
 
-% Xiaohongshu (RED) mark: red rounded square with white lettering
-\newcommand{\xhslogo}{\tikz[baseline=(t.base)]{\node[fill=red!85!black, rounded corners=1.6pt, inner sep=1.2pt, text=white, font=\bfseries\tiny\sffamily] (t) {RED};}}
+\newcommand{\xhslogo}{\raisebox{-0.2ex}{\includegraphics[height=1.3em]{images/xiaohongshu.png}}}
 \newcommand{\hl}[1]{{\color{cobgold}\textbf{#1}}}
 
 % ---------- metadata ----------
@@ -344,9 +343,8 @@
 % ======================================================================
 \begin{frame}{About me}
   \centering
-  \includegraphics[width=0.62\textwidth]{images/portrait-cern.jpg}\\[0.2em]
-  {\scriptsize\color{cobgrey} Next to an LHC dipole magnet at CERN, 2018}
-  \vspace{0.5em}
+  \includegraphics[width=0.74\textwidth]{images/portrait-cern.jpg}
+  \vspace{0.3em}
 
   \begin{columns}[c]
     \column{0.62\textwidth}
