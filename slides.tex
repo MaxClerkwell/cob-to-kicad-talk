@@ -8,6 +8,8 @@
 \usepackage{qrcode}
 \usepackage{fontawesome5}
 \usepackage{booktabs}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \usepackage{listings}
 \usetikzlibrary{arrows.meta, positioning, shapes.geometric, fit, calc}
 
@@ -361,6 +363,37 @@
   \end{columns}
   \vfill
   {\scriptsize\color{cobgrey} Tested on the wafer.space gf180mcu example: 56 pads, 52 labeled.}
+\end{frame}
+
+% ======================================================================
+\begin{frame}{Limits of the extraction, and why they are hard to fix}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.0}
+  \begin{tabular}{@{}L{2.9cm}L{3.9cm}L{5.2cm}@{}}
+    \toprule
+    \textbf{Limit} & \textbf{What it means} & \textbf{Why it is not an easy fix}\\
+    \midrule
+    Every pad is a rectangle
+      & Round or octagonal openings become boxes, so the footprint is only approximate
+      & Format and generator know only \texttt{rect} for die pads. The real polygon needs a shape field first, and every tool downstream must follow\\
+    \addlinespace[0.15em]
+    Layers and cell names come from a table per PDK
+      & \texttt{gf180mcu} works, \texttt{sky130} is untested, other PDKs find no pads
+      & No standard: every foundry numbers layers and names I/O cells differently, some documents are under NDA. Someone who knows the PDK writes each table\\
+    \addlinespace[0.15em]
+    Names only from text labels
+      & Unlabeled pads stay \texttt{"unspecified"} (4 of 56 in the example)
+      & A layout has no connectivity. The true name lives in the netlist, so it needs a second input and a matching step\\
+    \addlinespace[0.15em]
+    Pin type guessed from the cell name
+      & Wrong or missing pin types in the KiCad symbol
+      & The type is design intent, not geometry. Name fragments are a heuristic, custom pad cells break it\\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.1em}
+  \begin{center}\footnotesize
+    The rule: \hl{what the layout cannot know is never guessed}, it stays \texttt{"unspecified"}.
+  \end{center}
 \end{frame}
 
 % ======================================================================
