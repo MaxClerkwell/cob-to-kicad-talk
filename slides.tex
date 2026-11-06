@@ -39,6 +39,8 @@
 \lstset{basicstyle=\ttfamily\scriptsize, columns=fullflexible, keepspaces=true,
   frame=single, rulecolor=\color{cobblue!40}, backgroundcolor=\color{cobblue!3}}
 
+% Xiaohongshu (RED) mark: red rounded square with white lettering
+\newcommand{\xhslogo}{\tikz[baseline=(t.base)]{\node[fill=red!85!black, rounded corners=1.6pt, inner sep=1.2pt, text=white, font=\bfseries\tiny\sffamily] (t) {RED};}}
 \newcommand{\hl}[1]{{\color{cobgold}\textbf{#1}}}
 
 % ---------- metadata ----------
@@ -342,7 +344,7 @@
 % ======================================================================
 \begin{frame}{About me}
   \centering
-  \includegraphics[width=0.8\textwidth]{images/portrait-cern.jpg}\\[0.2em]
+  \includegraphics[width=0.62\textwidth]{images/portrait-cern.jpg}\\[0.2em]
   {\scriptsize\color{cobgrey} Next to an LHC dipole magnet at CERN, 2018}
   \vspace{0.5em}
 
@@ -355,7 +357,7 @@
       \begin{alertblock}{Hire me for freelance work}
         Onboarding with \textbf{your first chip}: from the layout to the bonded board.
       \end{alertblock}
-      \faGlobe\ maxclerkwell.tech \quad \faGithub\ MaxClerkwell
+      \faGlobe\ maxclerkwell.tech\\[0.2em]\faInstagram\ \_maxclerkwell \quad \xhslogo\ \_maxclerkwell
     \column{0.2\textwidth}
       \centering
       \qrcode[height=2.6cm]{https://nabla-b.engineering/en/business-card/}\\[0.2em]
