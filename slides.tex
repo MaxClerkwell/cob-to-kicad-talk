@@ -366,16 +366,16 @@
 \end{frame}
 
 % ======================================================================
-\begin{frame}{Limits of the extraction, and why they are hard to fix}
+\begin{frame}{Limits of the extraction, and what it takes to fix them}
   \footnotesize
   \renewcommand{\arraystretch}{1.0}
   \begin{tabular}{@{}L{2.9cm}L{3.9cm}L{5.2cm}@{}}
     \toprule
-    \textbf{Limit} & \textbf{What it means} & \textbf{Why it is not an easy fix}\\
+    \textbf{Limit} & \textbf{What it means} & \textbf{What it takes to fix}\\
     \midrule
     Every pad is a rectangle
       & Round or octagonal openings become boxes, so the footprint is only approximate
-      & Format and generator know only \texttt{rect} for die pads. The real polygon needs a shape field first, and every tool downstream must follow\\
+      & \hl{Easy, just not implemented yet.} The opening polygon is already read, it only has to be stored in the file and drawn\\
     \addlinespace[0.15em]
     Layers and cell names come from a table per PDK
       & \texttt{gf180mcu} works, \texttt{sky130} is untested, other PDKs find no pads
