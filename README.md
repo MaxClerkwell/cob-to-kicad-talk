@@ -27,5 +27,4 @@ Pushes to `main` and pull requests only build the PDF and upload it as a workflo
 
 ## TODO
 
-- Add `images/portrait.jpg` for the about-me slide (a placeholder is shown until then).
 - Images in `images/` come from [open.cob.json](https://github.com/MaxClerkwell/open.cob.json) (CC BY 4.0).
