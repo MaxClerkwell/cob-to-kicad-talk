@@ -396,22 +396,20 @@
 \begin{frame}[fragile]{Step 2: how the data is formatted in JSON}
   \footnotesize
   \begin{columns}[T]
-    \column{0.43\textwidth}
-      \begin{description}\setlength\itemsep{0.3em}
-        \item[\texttt{die}] the chip: size, notch, pads. \hl{filled by \texttt{cobgen}}
-        \item[\texttt{pcb}] shapes, pads, misc (mask, cutout, keepout, fiducial)
-        \item[\texttt{wires}] die pad $\to$ PCB pad, type, loop, bond, tests
-        \item[\texttt{assembly}] die attach, bonding, tempering, sequence
-      \end{description}
-      \vspace{0.2em}
+    \column{0.45\textwidth}
+      \texttt{\textbf{die}} \hl{cobgen}: chip size, notch, pads\\[0.2em]
+      \texttt{\textbf{pcb}} \hl{cobedit}: shapes, pads, misc\\[0.2em]
+      \texttt{\textbf{wires}} \hl{cobedit}: die pad $\to$ PCB pad, loop, bond\\[0.2em]
+      \texttt{\textbf{assembly}} \hl{own interface planned}: die attach, bonding, tempering. Not needed for footprint and symbol.
+
+      \vspace{0.5em}
       \textbf{Rules}
-      \begin{itemize}\setlength\itemsep{0.15em}
-        \item One file = one delivered die (UUID)
-        \item One origin: die center, mm, Y up
+      \begin{itemize}\setlength\itemsep{0.1em}
+        \item One file = one delivered die (UUID), origin at the die center, mm, Y up
         \item \texttt{"none"} = deliberately absent, \texttt{"unspecified"} = not known yet
-        \item Land patterns: reusable \texttt{*.shape.cob.json}, referenced by UUID, then scaled, rotated, placed
+        \item Land patterns: reusable \texttt{*.shape.cob.json}, referenced by UUID
       \end{itemize}
-    \column{0.55\textwidth}
+    \column{0.53\textwidth}
 \begin{lstlisting}
 "die": { "pads": [ {
   "id": "D1", "name": "CLK",
@@ -491,12 +489,12 @@ uv run cobkicad \
       \begin{description}\setlength\itemsep{0.35em}
         \item[\texttt{cobtestdata}] fetches the manufactured wafer.space reticles as test input
         \item[\texttt{cobgen}] GDSII / OASIS $\to$ \texttt{die} block
-        \item[\texttt{cobedit}] place PCB pads from a shape catalog
+        \item[\texttt{cobedit}] place PCB pads from a shape catalog, add wires
         \item[\texttt{cobviz}] render the bonding plan as SVG
         \item[\texttt{cobkicad}] KiCad 9/10 symbol and footprint
       \end{description}
       \vspace{0.4em}
-      \small Work in progress. Wires are still written by hand.\\
+      \small Work in progress. \texttt{assembly} still has no editor.\\
       \texttt{github.com/MaxClerkwell/open.cob.json}
     \column{0.5\textwidth}
       \centering
