@@ -133,20 +133,31 @@
 \begin{frame}{What does it take to characterize an ASIC?}
   \centering
   \begin{tikzpicture}[
-      pstep/.style={draw=cobblue, rounded corners=2pt, fill=cobblue!6, align=left,
-                   minimum height=1.9cm, text width=3.35cm, font=\scriptsize, inner sep=5pt, execute at begin node={\hyphenpenalty=10000\relax}},
-      plast/.style={pstep, fill=cobgreen!15, draw=cobgreen},
+      pstep/.style={draw=cobblue, rounded corners=2pt, fill=cobblue!8, align=left,
+                    minimum height=2.3cm, text width=1.85cm, font=\scriptsize, inner sep=4pt,
+                    execute at begin node={\hyphenpenalty=10000\relax}},
+      fab/.style={pstep, fill=cobgold!25, draw=cobgold},
+      lab/.style={pstep, fill=cobgreen!12, draw=cobgreen},
       arr/.style={-{Stealth[length=2mm]}, thick, color=cobgrey}]
-    \node[pstep] (a) at (0,0) {\textbf{1. Get the die}\\[0.2em] The design goes to a shuttle run, bare dies come back};
-    \node[pstep] (b) at (4.1,0) {\textbf{2. Mount it}\\[0.2em] Glue the die onto a test PCB, wire-bond it to the board pads (CoB)};
-    \node[pstep] (c) at (8.2,0) {\textbf{3. Power and bias}\\[0.2em] Supplies, reference voltages and currents, decoupling, grounding};
-    \node[pstep] (d) at (0,-2.5) {\textbf{4. Configure}\\[0.2em] Set registers and DACs over a slow-control interface};
-    \node[pstep] (e) at (4.1,-2.5) {\textbf{5. Read out}\\[0.2em] Clock, data link and synchronisation into an FPGA, then over the network to a PC};
-    \node[plast] (f) at (8.2,-2.5) {\textbf{6. Measure}\\[0.2em] Pulser calibration, noise and threshold scans, then test beam};
-    \draw[arr] (a)--(b); \draw[arr] (b)--(c);
-    \draw[arr] (c.south) -- ++(0,-0.35) -| ($(d.north)+(0,0.35)$) -- (d.north);
-    \draw[arr] (d)--(e); \draw[arr] (e)--(f);
+    \node[pstep] (n1) at (0,0)   {\textbf{1. Idea}\\[0.2em] What should it measure or do?};
+    \node[pstep] (n2) at (2.4,0) {\textbf{2. Design}\\[0.2em] Schematic, Verilog, simulation};
+    \node[pstep] (n3) at (4.8,0) {\textbf{3. Layout}\\[0.2em] GDS / OASIS, DRC and LVS checks};
+    \node[fab]   (n4) at (7.2,0) {\textbf{4. Fab}\\[0.2em] Shuttle run at the foundry};
+    \node[fab]   (n5) at (9.6,0) {\textbf{5. Dies back}\\[0.2em] Wafer sawn, bare dies delivered};
+    \node[lab]   (n6) at (0,-3.0)   {\textbf{6. Mount}\\[0.2em] Glue the die onto a test PCB, wire-bond it (CoB)};
+    \node[lab]   (n7) at (2.4,-3.0) {\textbf{7. Power and bias}\\[0.2em] Supplies, references, decoupling};
+    \node[lab]   (n8) at (4.8,-3.0) {\textbf{8. Configure}\\[0.2em] Registers and DACs via slow control};
+    \node[lab]   (n9) at (7.2,-3.0) {\textbf{9. Read out}\\[0.2em] Clock, data link, FPGA, network, PC};
+    \node[lab, fill=cobgreen!25] (n10) at (9.6,-3.0) {\textbf{10. Measure}\\[0.2em] Calibration, noise and threshold scans, test beam};
+    \foreach \a/\b in {n1/n2,n2/n3,n3/n4,n4/n5,n6/n7,n7/n8,n8/n9,n9/n10} \draw[arr] (\a)--(\b);
+    \draw[arr] (n5.south) -- ++(0,-0.35) -| ($(n6.north)+(0,0.35)$) -- (n6.north);
   \end{tikzpicture}
+  \vspace{0.4em}
+
+  {\footnotesize
+   \tikz[baseline=-0.5ex]\node[draw=cobblue, fill=cobblue!8, minimum width=0.4cm, minimum height=0.25cm]{}; you design
+   \quad \tikz[baseline=-0.5ex]\node[draw=cobgold, fill=cobgold!25, minimum width=0.4cm, minimum height=0.25cm]{}; the foundry builds
+   \quad \tikz[baseline=-0.5ex]\node[draw=cobgreen, fill=cobgreen!12, minimum width=0.4cm, minimum height=0.25cm]{}; you test in the lab}
   \vfill
   \small Every step has to work at the same time before a measurement means anything.
 \end{frame}
