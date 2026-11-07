@@ -43,6 +43,7 @@
   frame=single, rulecolor=\color{cobblue!40}, backgroundcolor=\color{cobblue!3}}
 
 \newcommand{\xhslogo}{\raisebox{-0.2ex}{\includegraphics[height=1.3em]{images/xiaohongshu.png}}}
+\newcommand{\halves}[2]{\parbox[t][3.3cm][s]{\linewidth}{\raggedright #1\vfill\raggedright\footnotesize #2}}
 \newsavebox{\stackbox}
 \newlength{\stackh}
 \newlength{\stackw}
@@ -65,26 +66,26 @@
 % ======================================================================
 \begin{frame}{Chip design has opened up}
   \small
-  \begin{columns}[T]
-    \column{0.235\textwidth}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.225\textwidth}
       \begin{block}{More open}
-        Open PDKs and toolchain: \textbf{OpenROAD}, Yosys, KLayout, Magic, ngspice.\\[0.6em]
-        \footnotesize Pioneered by people like \textbf{Tim Ansell}.
+        \halves{Open PDKs and open tools: \textbf{OpenROAD}, Yosys, KLayout, Magic, ngspice.}
+               {Open PDKs: \textbf{Tim Ansell}}
       \end{block}
-    \column{0.235\textwidth}
+    \column{0.225\textwidth}
       \begin{block}{More accessible}
-        Courses from zero to taped-out silicon.\\[0.6em]
-        \footnotesize \textbf{Matthew Venn}: \textbf{Tiny Tapeout} and his courses.
+        \halves{Courses from zero to taped-out silicon.}
+               {\textbf{Matthew Venn}: \textbf{Tiny Tapeout} and his courses}
       \end{block}
-    \column{0.235\textwidth}
+    \column{0.225\textwidth}
       \begin{block}{More affordable}
-        Real silicon, real dies, on a hobbyist and university budget.\\[0.6em]
-        \footnotesize \textbf{wafer.space}, with \textbf{Stuart Childs}.
+        \halves{Real silicon, real dies, from shared shuttle runs.}
+               {\textbf{wafer.space}, founded by \textbf{Tim Ansell}}
       \end{block}
-    \column{0.235\textwidth}
+    \column{0.225\textwidth}
       \begin{block}{More hackable}
-        Chips fabricated in a garage, by hand.\\[0.6em]
-        \footnotesize \textbf{Sam Zeloof} and the \textbf{Hackerfab} community.
+        \halves{Chips made in a garage with homebrew equipment.}
+               {\textbf{Sam Zeloof} and the \textbf{Hackerfab} community}
       \end{block}
   \end{columns}
   \vfill
