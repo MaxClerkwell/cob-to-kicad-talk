@@ -38,6 +38,7 @@
   \hfill\usebeamercolor[fg]{footline}\scriptsize\color{cobgrey}%
   CoB to KiCad\quad\insertframenumber/\inserttotalframenumber\hspace{1em}\vspace{0.6em}}
 
+\lstdefinelanguage{cobshell}{morecomment=[l]{\#}}
 \lstset{basicstyle=\ttfamily\scriptsize, columns=fullflexible, keepspaces=true,
   frame=single, rulecolor=\color{cobblue!40}, backgroundcolor=\color{cobblue!3}}
 
@@ -226,7 +227,7 @@
         \end{tikzpicture}\\[0.4em]
         \raggedright
         \begin{itemize}\setlength\itemsep{0.2em}
-          \item Bare die glued onto the PCB, wires bonded to board pads
+          \item Bare die first glued onto the PCB, then wires bonded to board pads
           \item No package: cheaper, smaller, shorter wires
           \item Direct access to special pads, probe points, sensors
           \item \textbf{But: no standard footprint}. You design it for each chip.
@@ -254,7 +255,7 @@
         \node[font=\tiny] at (3,0.65) {die};
         \node[font=\tiny, anchor=north] at (3,0.0) {PCB};
       \end{tikzpicture}\\[0.1em]
-      \textbf{Wire bonding}: die face up, thin wires from die pads to board pads\\[1.4em]
+      \textbf{Wire bonding}: die glued to the board first (die attach), then thin wires from die pads to board pads\\[1.4em]
       \begin{tikzpicture}[scale=0.92]
         \draw[fill=cobgreen!40] (0,0) rectangle (6,0.35);
         \foreach \x in {1.8,2.6,3.4,4.2} {
@@ -298,6 +299,8 @@
       \end{tikzpicture}\\[0.1em]
       \textbf{FOPLP}: dies embedded in a panel, redistribution layers fan the pads out to solder balls
   \end{columns}
+  \vfill
+  {\scriptsize\color{cobgrey} Wire bonding in detail: my talk \textit{Poor Man's Introduction to Wire-Bonding}, KiCon Europe 2025 (Bochum) and KiCon Asia 2025 (Shenzhen).}
 \end{frame}
 
 % ======================================================================
@@ -673,6 +676,124 @@ fp.write("open_cob.pretty")
       \includegraphics[width=\textwidth]{images/cobedit-screenshot.png}\\[0.2em]
       {\scriptsize\color{cobgrey} \texttt{cobedit} with the fictional demo chip}
   \end{columns}
+\end{frame}
+
+% ======================================================================
+\begin{frame}{Why not a KiCad plugin?}
+  \footnotesize
+  \begin{columns}[T]
+    \column{0.47\textwidth}
+      \begin{alertblock}{A plugin makes KiCad a dependency}
+        \begin{itemize}\setlength\itemsep{0.15em}
+          \item The workflow lives inside one tool and follows its versions and its API
+          \item Only KiCad users can use it
+          \item The chip designer would have to know the PCB designer's EDA
+        \end{itemize}
+      \end{alertblock}
+      \begin{exampleblock}{Open format plus generator}
+        \begin{itemize}\setlength\itemsep{0.15em}
+          \item Nothing depends on KiCad, it is one output among others
+          \item Other EDA tools can adopt the format
+          \item The chip designer delivers one file, whatever the board is designed in
+        \end{itemize}
+      \end{exampleblock}
+    \column{0.5\textwidth}
+      \centering
+      \begin{tikzpicture}[
+          box/.style={draw=cobblue, rounded corners=2pt, fill=cobblue!6, align=center,
+                      minimum height=0.8cm, text width=2.6cm, font=\scriptsize},
+          done/.style={box, fill=cobgreen!15, draw=cobgreen},
+          plan/.style={box, dashed, text width=2.5cm},
+          arr/.style={-{Stealth[length=2mm]}, thick, color=cobgrey},
+          parr/.style={-{Stealth[length=2mm]}, thick, dashed, color=cobgrey}]
+        \node[box, fill=cobgold!25, draw=cobgold, text width=2.4cm, minimum height=1.2cm] (c) at (0,0) {\texttt{.cob.json}\\ the open format};
+        \node[done] (k) at (3.3,1.5) {KiCad\\ symbol, footprint};
+        \node[plan] (e) at (3.3,0) {other EDA tools};
+        \node[plan] (t) at (3.3,-1.5) {bond parameters,\\ tests};
+        \draw[arr] (c)--(k); \draw[parr] (c)--(e); \draw[parr] (c)--(t);
+        \node[font=\tiny, color=cobgrey, anchor=west] at (-1.2,-2.3) {solid: works today, dashed: planned};
+      \end{tikzpicture}
+  \end{columns}
+\end{frame}
+
+% ======================================================================
+\begin{frame}{Next steps}
+  \begin{enumerate}\setlength\itemsep{0.7em}
+    \item Check with a design service and a bonding service whether I overlooked important points that need another look
+    \item Test more chips, to find what I overlooked
+    \item Integrate other PDKs
+    \item Find a workaround or a fix for layers with multiple names
+    \item Add automatic wire shape generation
+  \end{enumerate}
+  \vfill
+  \begin{center}\small\color{cobgrey}
+    And one completely different approach: glue the die and connect it with a flex PCB (next slide).
+  \end{center}
+\end{frame}
+
+% ======================================================================
+\begin{frame}{A different approach: glue plus flex PCB}
+  \small
+  \begin{columns}[T]
+    \column{0.5\textwidth}
+      \centering
+      \begin{tikzpicture}[scale=0.8]
+        \draw[fill=cobgreen!40] (0,0) rectangle (6,0.35);
+        \fill[cobgrey] (0.4,0.35) rectangle (0.9,0.42); \fill[cobgrey] (5.1,0.35) rectangle (5.6,0.42);
+        \draw[fill=black!15] (1.9,0.35) rectangle (4.9,0.45);
+        \draw[fill=cobgold!40] (1.9,0.45) rectangle (4.9,0.85);
+        \fill[cobgrey] (2.0,0.85) rectangle (2.3,0.9); \fill[cobgrey] (4.5,0.85) rectangle (4.8,0.9);
+        \draw[thick, cobblue] (2.15,0.9) .. controls (1.5,1.7) and (1.0,1.3) .. (0.65,0.42);
+        \draw[thick, cobblue] (4.65,0.9) .. controls (5.1,1.7) and (5.3,1.3) .. (5.35,0.42);
+        \draw[dashed, cobgrey] (1.6,0.45) -- (1.6,0.85); \draw[dashed, cobgrey] (4.6,0.45) -- (4.6,0.85);
+        \draw[-{Stealth}, cobgrey] (1.6,0.2) -- (1.9,0.2);
+      \end{tikzpicture}\\[0.1em]
+      \textbf{Wire bonding}: the die sits off by a bit, each wire still lands on its pad
+    \column{0.5\textwidth}
+      \centering
+      \begin{tikzpicture}[scale=0.8]
+        \draw[fill=cobgreen!40] (0,0) rectangle (6,0.35);
+        \draw[fill=black!15] (1.9,0.35) rectangle (4.9,0.45);
+        \draw[fill=cobgold!40] (1.9,0.45) rectangle (4.9,0.85);
+        \fill[cobgrey] (2.0,0.85) rectangle (2.3,0.9); \fill[cobgrey] (4.5,0.85) rectangle (4.8,0.9);
+        \draw[fill=orange!30] (0.2,1.0) rectangle (5.8,1.12);
+        \fill[cobgrey!70!black] (1.75,1.0) rectangle (2.05,0.96); \fill[cobgrey!70!black] (4.25,1.0) rectangle (4.55,0.96);
+        \draw[cobred, very thick] (2.0,0.92) -- (2.1,1.0); \draw[cobred, very thick] (4.5,0.92) -- (4.6,1.0);
+        \node[font=\tiny, color=cobred] at (3.0,1.35) {contacts miss the pads};
+      \end{tikzpicture}\\[0.1em]
+      \textbf{Flex PCB}: the pattern is fixed, a shifted die misaligns every contact at once
+  \end{columns}
+  \vspace{0.6em}
+  \begin{itemize}\setlength\itemsep{0.3em}
+    \item The idea: glue the die and connect it with a flex PCB instead of wires
+    \item Open questions about the tolerances, to be evaluated experimentally
+    \item Wires compensate tolerances better than a flex PCB, especially when the die shifts during placement
+  \end{itemize}
+\end{frame}
+
+% ======================================================================
+\begin{frame}[fragile]{Demo: from the reticle to the footprint}
+\begin{lstlisting}[language=cobshell, basicstyle=\ttfamily\scriptsize, commentstyle=\color{cobblue}\bfseries]
+# 1. Initialize: fetch the shuttle reticle and manifest, once
+uv run initialize_testdata --run 2
+
+# 2. Pick a chip from the menu (one folder per chip)
+uv run extract_die --run 2
+
+# 3. Extract the die from the layout into a .cob.json
+uv run cobgen --file testdata/dies/CAFE/chip_top.oas \
+              --pdk gf180mcu --out testdata/dies/CAFE/CAFE.cob.json
+
+# 4. Add PCB pads and wires in the editor
+uv run cobedit --file testdata/dies/CAFE/CAFE.cob.json
+
+# 5. Generate symbol and footprint
+uv run cobkicad --file testdata/dies/CAFE/CAFE.cob.json \
+                --out testdata/dies/CAFE/kicad
+
+# 6. KiCad: add the .kicad_sym and the .pretty folder as
+#    libraries, place the symbol
+\end{lstlisting}
 \end{frame}
 
 % ======================================================================
