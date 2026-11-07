@@ -43,6 +43,9 @@
   frame=single, rulecolor=\color{cobblue!40}, backgroundcolor=\color{cobblue!3}}
 
 \newcommand{\xhslogo}{\raisebox{-0.2ex}{\includegraphics[height=1.3em]{images/xiaohongshu.png}}}
+\newsavebox{\stackbox}
+\newlength{\stackh}
+\newlength{\stackw}
 \newcommand{\hl}[1]{{\color{cobgold}\textbf{#1}}}
 
 % ---------- metadata ----------
@@ -799,12 +802,9 @@ uv run cobkicad --file testdata/dies/CAFE/CAFE.cob.json \
 
 % ======================================================================
 \begin{frame}{About me - Stephan Bökelmann}
-  \centering
-  \includegraphics[width=1.0\textwidth]{images/portrait-cern.jpg}
-  \vfill
-
-  \begin{columns}[T]
-    \column{0.67\textwidth}
+  \setlength{\stackw}{0.7\textwidth}
+  \newcommand{\aboutstack}{%
+    \begin{minipage}[t]{\stackw}
       \footnotesize
       \begin{beamercolorbox}[wd=\linewidth,sep=0.4em]{block title alerted}
         Scientific Research Engineer at Facility for Antiproton and Ion Research
@@ -823,9 +823,16 @@ uv run cobkicad --file testdata/dies/CAFE/CAFE.cob.json \
         \scriptsize
         \faGlobe\ maxclerkwell.tech \quad \faInstagram\ Instagram \quad \xhslogo\ Xiaohongshu \quad \faDiscord\ Discord
       \end{beamercolorbox}
-    \column{0.3\textwidth}
-      \centering
-      \qrcode[height=3.2cm]{https://nabla-b.engineering/en/business-card/}
+    \end{minipage}}
+  \sbox{\stackbox}{\aboutstack}
+  \setlength{\stackh}{\dimexpr\ht\stackbox+\dp\stackbox\relax}
+  \noindent\includegraphics[width=\textwidth]{images/portrait-cern.jpg}
+  \vfill
+  \begin{columns}[T,onlytextwidth]
+    \column{\stackw}
+      \aboutstack
+    \column{\stackh}
+      \qrcode[tight,height=\stackh]{https://nabla-b.engineering/en/business-card/}
   \end{columns}
 \end{frame}
 
