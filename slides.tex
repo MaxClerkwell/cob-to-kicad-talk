@@ -717,6 +717,31 @@ fp.write("open_cob.pretty")
 \end{frame}
 
 % ======================================================================
+\begin{frame}[fragile]{Demo: from the reticle to the footprint}
+\begin{lstlisting}[language=cobshell, basicstyle=\ttfamily\scriptsize, commentstyle=\color{cobblue}\bfseries]
+# 1. Initialize: fetch the shuttle reticle and manifest, once
+uv run initialize_testdata --run 2
+
+# 2. Pick a chip from the menu (one folder per chip)
+uv run extract_die --run 2
+
+# 3. Extract the die from the layout into a .cob.json
+uv run cobgen --file testdata/dies/CAFE/chip_top.oas \
+              --pdk gf180mcu --out testdata/dies/CAFE/CAFE.cob.json
+
+# 4. Add PCB pads and wires in the editor
+uv run cobedit --file testdata/dies/CAFE/CAFE.cob.json
+
+# 5. Generate symbol and footprint
+uv run cobkicad --file testdata/dies/CAFE/CAFE.cob.json \
+                --out testdata/dies/CAFE/kicad
+
+# 6. KiCad: add the .kicad_sym and the .pretty folder as
+#    libraries, place the symbol
+\end{lstlisting}
+\end{frame}
+
+% ======================================================================
 \begin{frame}{Next steps}
   \begin{enumerate}\setlength\itemsep{0.55em}
     \item Check with a design service and a bonding service whether I overlooked important points that need another look
@@ -773,51 +798,32 @@ fp.write("open_cob.pretty")
 \end{frame}
 
 % ======================================================================
-\begin{frame}[fragile]{Demo: from the reticle to the footprint}
-\begin{lstlisting}[language=cobshell, basicstyle=\ttfamily\scriptsize, commentstyle=\color{cobblue}\bfseries]
-# 1. Initialize: fetch the shuttle reticle and manifest, once
-uv run initialize_testdata --run 2
-
-# 2. Pick a chip from the menu (one folder per chip)
-uv run extract_die --run 2
-
-# 3. Extract the die from the layout into a .cob.json
-uv run cobgen --file testdata/dies/CAFE/chip_top.oas \
-              --pdk gf180mcu --out testdata/dies/CAFE/CAFE.cob.json
-
-# 4. Add PCB pads and wires in the editor
-uv run cobedit --file testdata/dies/CAFE/CAFE.cob.json
-
-# 5. Generate symbol and footprint
-uv run cobkicad --file testdata/dies/CAFE/CAFE.cob.json \
-                --out testdata/dies/CAFE/kicad
-
-# 6. KiCad: add the .kicad_sym and the .pretty folder as
-#    libraries, place the symbol
-\end{lstlisting}
-\end{frame}
-
-% ======================================================================
-\begin{frame}{About me}
+\begin{frame}{About me - Stephan Bökelmann}
   \centering
   \includegraphics[width=0.78\textwidth]{images/portrait-cern.jpg}
-  \vspace{-0.4em}
+  \vspace{-0.1em}
 
   \begin{columns}[T]
     \column{0.64\textwidth}
-      {\large\textbf{Stephan Bökelmann}}\\[0.1em]
-      {\scriptsize Scientific Research Engineer at FAIR (Facility for Antiproton and Ion Research)\\
-       Newest startup: \textbf{skAInet}}\\[0.3em]
-      \begin{beamercolorbox}[wd=\linewidth,sep=0.5em]{block title alerted}
+      \footnotesize
+      \begin{beamercolorbox}[wd=\linewidth,sep=0.4em]{block title alerted}
+        Scientific Research Engineer at FAIR (Facility for Antiproton and Ion Research)
+      \end{beamercolorbox}
+      \vspace{0.2em}
+      \begin{beamercolorbox}[wd=\linewidth,sep=0.4em]{block title alerted}
+        Newest startup: \textbf{skAInet}
+      \end{beamercolorbox}
+      \vspace{0.2em}
+      \begin{beamercolorbox}[wd=\linewidth,sep=0.4em]{block title alerted}
         \textbf{Hire me and my team via nabla B engineering}
       \end{beamercolorbox}
       \vspace{0.2em}
-      \begin{alertblock}{Follow me}
+      \begin{beamercolorbox}[wd=\linewidth,sep=0.4em]{block title alerted}
+        \textbf{Follow me} for digital design, physics and ASICs\\[0.3em]
         \scriptsize
-        \textbf{For digital design, physics and ASICs}\\[0.2em]
         \faGlobe\ maxclerkwell.tech \quad \faInstagram\ \_maxclerkwell \quad \xhslogo\ \_maxclerkwell\\[0.1em]
         \faDiscord\ Full Stack Engineering: discord.gg/2BXuUY6hrX
-      \end{alertblock}
+      \end{beamercolorbox}
     \column{0.32\textwidth}
       \centering
       \qrcode[height=1.9cm]{https://nabla-b.engineering/en/business-card/}\\[0.6em]
