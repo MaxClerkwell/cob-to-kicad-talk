@@ -375,6 +375,30 @@
 \end{frame}
 
 % ======================================================================
+\begin{frame}{Requirements for an exchange format}
+  \footnotesize
+  \vspace{0.3em}
+  \renewcommand{\arraystretch}{1.05}
+  \begin{tabular}{@{}L{3.3cm}L{7.2cm}c@{}}
+    \toprule
+    \textbf{Requirement} & \textbf{In practice} & \textbf{Fixes}\\
+    \midrule
+    One file per die & One UUID, one source of truth for chip, board and wires & 1\\
+    Open and machine-readable & Plain JSON, readable by people, diffable in git, no tool lock-in & 1\\
+    Honest about gaps & \texttt{"none"} means deliberately absent, \texttt{"unspecified"} means unknown. Nothing is guessed & 1\\
+    Explicit tolerances & Nominal $\pm$ tolerance or ranges, so the die placement can widen every wire landing & 4\\
+    Reusable land patterns & Shapes from a catalog, placed by reference, scaled and rotated & 3\\
+    Derive, do not redraw & Footprint, symbol, bond parameters and tests come from the same file & 2, 3\\
+    Usable in stages & The chip designer delivers a die-only file, the PCB designer adds the rest & 2\\
+    Open to extension & Wire bonding first, flip-chip and others later without breaking old files & --\\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.3em}
+
+  {\scriptsize\color{cobgrey} \textit{Fixes}: the number of the difficulty on the previous slide.}
+\end{frame}
+
+% ======================================================================
 \begin{frame}[fragile]{open.cob.json: one file between chip and PCB designer}
   \begin{columns}[T]
     \column{0.5\textwidth}
