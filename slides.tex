@@ -718,12 +718,13 @@ fp.write("open_cob.pretty")
 
 % ======================================================================
 \begin{frame}{Next steps}
-  \begin{enumerate}\setlength\itemsep{0.7em}
+  \begin{enumerate}\setlength\itemsep{0.55em}
     \item Check with a design service and a bonding service whether I overlooked important points that need another look
     \item Test more chips, to find what I overlooked
     \item Integrate other PDKs
-    \item Find a workaround or a fix for layers with multiple names
+    \item Find a workaround or a fix for pads with multiple labels
     \item Add automatic wire shape generation
+    \item Improve the shape catalog in \texttt{cobedit}
   \end{enumerate}
   \vfill
   \begin{center}\small\color{cobgrey}
@@ -799,25 +800,35 @@ uv run cobkicad --file testdata/dies/CAFE/CAFE.cob.json \
 % ======================================================================
 \begin{frame}{About me}
   \centering
-  \includegraphics[width=0.74\textwidth]{images/portrait-cern.jpg}
-  \vspace{0.3em}
+  \includegraphics[width=0.78\textwidth]{images/portrait-cern.jpg}
+  \vspace{0.1em}
 
-  \begin{columns}[c]
-    \column{0.7\textwidth}
-      {\Large\textbf{Stephan Bökelmann}}\\[0.3em]
-      \small Scientific Research Engineer at\\
-      Facility for Antiproton and Ion Research (FAIR)\\[0.3em]
-      My newest startup: \textbf{skAInet}\\[0.6em]
-      \begin{beamercolorbox}[wd=\linewidth,sep=0.5em]{block title alerted}
-        \textbf{Hire me and my team via nabla B engineering}
-      \end{beamercolorbox}
-      \vspace{0.6em}
-      \footnotesize\faGlobe\ maxclerkwell.tech \quad \faInstagram\ \_maxclerkwell \quad \xhslogo\ \_maxclerkwell\\[0.2em]
-      \faDiscord\ Full Stack Engineering: discord.gg/2BXuUY6hrX
-    \column{0.22\textwidth}
-      \centering
-      \qrcode[height=2.6cm]{https://nabla-b.engineering/en/business-card/}\\[0.2em]
-      {\scriptsize\color{cobgrey} My business card}
+  \begin{flushleft}
+    {\large\textbf{Stephan Bökelmann}}\\[0.1em]
+    {\scriptsize Scientific Research Engineer at Facility for Antiproton and Ion Research (FAIR) \quad Newest startup: \textbf{skAInet}}
+  \end{flushleft}
+  \vspace{-0.4em}
+  \begin{columns}[T]
+    \column{0.36\textwidth}
+      \begin{alertblock}{Hire me and my team via nabla B engineering}
+        \centering
+        \qrcode[height=1.7cm]{https://nabla-b.engineering/en/business-card/}
+      \end{alertblock}
+    \column{0.62\textwidth}
+      \begin{alertblock}{Follow me}
+        \scriptsize
+        \begin{minipage}[c]{0.6\linewidth}
+          \textbf{For digital design, physics and ASICs}\\[0.2em]
+          \faGlobe\ maxclerkwell.tech\\
+          \faInstagram\ \_maxclerkwell \quad \xhslogo\ \_maxclerkwell\\
+          \faDiscord\ Full Stack Engineering\\
+          \hspace*{1.1em}discord.gg/2BXuUY6hrX
+        \end{minipage}\hfill
+        \begin{minipage}[c]{0.36\linewidth}
+          \centering
+          \includegraphics[height=1.7cm]{images/wechat-qr.png}
+        \end{minipage}
+      \end{alertblock}
   \end{columns}
 \end{frame}
 
