@@ -349,6 +349,32 @@
 \end{frame}
 
 % ======================================================================
+\begin{frame}{The current difficulties}
+  \small
+  \begin{columns}[T]
+    \column{0.485\textwidth}
+      \begin{alertblock}{1. The data is scattered}
+        Pad positions in the GDS, names and types in the schematic, metal and wire limits in process documents, the bonding plan on a slide. Nothing is machine-readable, the copies drift apart.
+      \end{alertblock}
+      \begin{alertblock}{2. Chicken and egg}
+        Wire length and angle depend on the land pattern, but the land pattern is exactly what you are trying to design.
+      \end{alertblock}
+    \column{0.485\textwidth}
+      \begin{alertblock}{3. New chip, new footprint}
+        Every chip iteration needs its own land pattern, drawn by hand, pad by pad.
+      \end{alertblock}
+      \begin{alertblock}{4. Tolerances stay invisible}
+        A die placed 50 to 100 $\mu$m off moves every wire landing point. In a drawing or a slide nobody can check this automatically.
+      \end{alertblock}
+  \end{columns}
+  \vfill
+  \begin{center}
+    Each one is a manual, undocumented step.\\
+    \color{cobgrey}\footnotesize The goal: make them explicit, in one file.
+  \end{center}
+\end{frame}
+
+% ======================================================================
 \begin{frame}[fragile]{open.cob.json: one file between chip and PCB designer}
   \begin{columns}[T]
     \column{0.5\textwidth}
