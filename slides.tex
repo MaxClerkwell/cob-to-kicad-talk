@@ -130,6 +130,28 @@
 \end{frame}
 
 % ======================================================================
+\begin{frame}{What does it take to characterize an ASIC?}
+  \centering
+  \begin{tikzpicture}[
+      pstep/.style={draw=cobblue, rounded corners=2pt, fill=cobblue!6, align=left,
+                   minimum height=1.9cm, text width=3.35cm, font=\scriptsize, inner sep=5pt, execute at begin node={\hyphenpenalty=10000\relax}},
+      plast/.style={pstep, fill=cobgreen!15, draw=cobgreen},
+      arr/.style={-{Stealth[length=2mm]}, thick, color=cobgrey}]
+    \node[pstep] (a) at (0,0) {\textbf{1. Get the die}\\[0.2em] The design goes to a shuttle run, bare dies come back};
+    \node[pstep] (b) at (4.1,0) {\textbf{2. Mount it}\\[0.2em] Glue the die onto a test PCB, wire-bond it to the board pads (CoB)};
+    \node[pstep] (c) at (8.2,0) {\textbf{3. Power and bias}\\[0.2em] Supplies, reference voltages and currents, decoupling, grounding};
+    \node[pstep] (d) at (0,-2.5) {\textbf{4. Configure}\\[0.2em] Set registers and DACs over a slow-control interface};
+    \node[pstep] (e) at (4.1,-2.5) {\textbf{5. Read out}\\[0.2em] Clock, data link and synchronisation into an FPGA, then over the network to a PC};
+    \node[plast] (f) at (8.2,-2.5) {\textbf{6. Measure}\\[0.2em] Pulser calibration, noise and threshold scans, then test beam};
+    \draw[arr] (a)--(b); \draw[arr] (b)--(c);
+    \draw[arr] (c.south) -- ++(0,-0.35) -| ($(d.north)+(0,0.35)$) -- (d.north);
+    \draw[arr] (d)--(e); \draw[arr] (e)--(f);
+  \end{tikzpicture}
+  \vfill
+  \small Every step has to work at the same time before a measurement means anything.
+\end{frame}
+
+% ======================================================================
 \begin{frame}{Terminology (1): from layout to die}
   \begin{columns}[T]
     \column{0.58\textwidth}
