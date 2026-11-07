@@ -125,20 +125,19 @@
 \end{frame}
 
 % ======================================================================
-\begin{frame}{Terminology}
+\begin{frame}{Terminology (1): from layout to die}
   \begin{columns}[T]
-    \column{0.55\textwidth}
-      \small
-      \begin{description}\setlength\itemsep{0.3em}
-        \item[Reticle] The exposure field of the lithography step. A shuttle run packs many
-          projects into one reticle.
-        \item[Die] One diced piece of silicon: your chip, bare, without any housing.
-        \item[Metallization] The top metal layers. They define what a wire can be bonded to
-          and which wire material, force and temperature work.
-        \item[Pad] An opening in the passivation where the die talks to the outside world.
-        \item[Bonding] Connecting die pads to board pads with thin wires (wedge or ball).
-      \end{description}
-    \column{0.42\textwidth}
+    \column{0.58\textwidth}
+      \footnotesize
+      \begin{itemize}\setlength\itemsep{0.35em}
+        \item \textbf{GDS / OASIS}: layout file formats with polygons per layer, text labels and nested cells. The truth about the geometry.
+        \item \textbf{PDK}: process design kit, the foundry's rules, layer map and cells for one manufacturing process.
+        \item \textbf{Shuttle run (MPW)}: many projects share one reticle and one wafer run, so the cost is split.
+        \item \textbf{Reticle}: the exposure field of the lithography step. A shuttle reticle holds many projects.
+        \item \textbf{Wafer, dicing}: the reticle is exposed many times onto a silicon wafer, then the wafer is sawn apart.
+        \item \textbf{Die}: one diced piece of silicon, your chip, bare, without any housing.
+      \end{itemize}
+    \column{0.38\textwidth}
       \centering
       \begin{tikzpicture}[scale=0.62]
         % reticle
@@ -148,7 +147,6 @@
         }
         \fill[cobgold!40] (0.25+1.1*2, 0.25+1.2*1) rectangle ++(1,1.1);
         \node[font=\scriptsize\bfseries, color=cobblue] at (2.5,4.0) {reticle};
-        \draw[-{Stealth}, cobgrey] (4.9,1.2) -- ++(0.0,-0.0);
         % zoom on die
         \begin{scope}[shift={(0.4,-3.7)}]
           \draw[thick, cobgold, fill=cobgold!25] (0,0) rectangle (4,3);
@@ -164,6 +162,32 @@
           \node[font=\scriptsize, color=cobgrey, anchor=west] at (4.1,2.8) {pads};
         \end{scope}
       \end{tikzpicture}
+  \end{columns}
+\end{frame}
+
+% ======================================================================
+\begin{frame}{Terminology (2): pads, wires and the board}
+  \footnotesize
+  \begin{columns}[T]
+    \column{0.5\textwidth}
+      \begin{itemize}\setlength\itemsep{0.35em}
+        \item \textbf{Metallization}: the top metal layers. They define what a wire can be bonded to and which wire material, force and temperature work.
+        \item \textbf{Passivation}: the protective layer over the chip. Where it is opened, the metal is free.
+        \item \textbf{Pad}: an opening in the passivation where the die talks to the outside world.
+        \item \textbf{Bond finger, bond target}: board copper where the wire lands, and the exact landing point on it.
+        \item \textbf{Land pattern, footprint}: the copper pattern on the PCB. In CoB it is new for every chip iteration.
+        \item \textbf{Die attach}: gluing the die onto the board, with a conductive or an insulating adhesive.
+      \end{itemize}
+    \column{0.46\textwidth}
+      \begin{block}{Bonding: connecting die and board}
+        \begin{itemize}\setlength\itemsep{0.3em}
+          \item \textbf{Wire bonding}: thin wire from die pad to board pad, wedge or ball
+          \item \textbf{Flip-chip}: die turned face down, bumps on the pads touch the board pads directly, no wires
+          \item \textbf{TAB} (tape automated bonding): metal traces on a flexible tape connect die and board
+        \end{itemize}
+      \end{block}
+      \vspace{0.3em}
+      {\scriptsize\color{cobgrey} open.cob.json starts with wire bonding and leaves room for the other techniques.}
   \end{columns}
 \end{frame}
 
