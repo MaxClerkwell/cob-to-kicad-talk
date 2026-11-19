@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24370142.svg)](https://doi.org/10.5281/zenodo.24370142)
 
-Slides: *From Bare Die to Bonded Board: Chip-on-Board Meets KiCad*, given at [KiCon Asia 2026](https://kicon.kicad.org/asia2026/) (Shenzhen, 6-7 November 2026).
+Slides: *From Bare Die to Bonded Board: Chip-on-Board Meets KiCad*, given at [KiCon Asia 2026](https://kicon.kicad.org/asia2026/) in Shenzhen on 7 November 2026.
 LaTeX Beamer, 16:9.
 
 ## Build

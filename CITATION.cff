@@ -6,7 +6,7 @@ authors:
     given-names: Stephan
     orcid: "https://orcid.org/0000-0002-2119-0064"
     affiliation: "nabla B Ingenieurbüro und Dienstleistungs-UG (haftungsbeschränkt), Bochum, Germany"
-version: 1.1.1
+version: 1.1.2
 doi: 10.5281/zenodo.24370142
 date-released: 2026-11-19
 license: CC-BY-4.0
@@ -23,6 +23,8 @@ preferred-citation:
       given-names: Stephan
       orcid: "https://orcid.org/0000-0002-2119-0064"
   year: 2026
+  month: 11
+  notes: "Talk given on 7 November 2026 at KiCon Asia 2026, Shenzhen."
   doi: 10.5281/zenodo.24370142
   url: "https://doi.org/10.5281/zenodo.24370142"
   conference:
