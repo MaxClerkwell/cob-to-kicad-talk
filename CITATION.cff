@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use these slides, please cite them as below."
+title: "From Bare Die to Bonded Board: Chip-on-Board Meets KiCad"
+authors:
+  - family-names: Bökelmann
+    given-names: Stephan
+    orcid: "https://orcid.org/0000-0002-2119-0064"
+    affiliation: "nabla B Ingenieurbüro und Dienstleistungs-UG (haftungsbeschränkt), Bochum, Germany"
+version: 1.1.0
+doi: 10.5281/zenodo.24370142
+date-released: 2026-11-19
+license: CC-BY-4.0
+repository-code: "https://github.com/MaxClerkwell/cob-to-kicad-talk"
+keywords:
+  - chip-on-board
+  - wire bonding
+  - KiCad
+preferred-citation:
+  type: slides
+  title: "From Bare Die to Bonded Board: Chip-on-Board Meets KiCad"
+  authors:
+    - family-names: Bökelmann
+      given-names: Stephan
+      orcid: "https://orcid.org/0000-0002-2119-0064"
+  year: 2026
+  doi: 10.5281/zenodo.24370142
+  url: "https://doi.org/10.5281/zenodo.24370142"
+  conference:
+    name: "KiCon 2026"
+    city: Shenzhen
+    country: CN

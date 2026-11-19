@@ -1,6 +1,8 @@
 # CoB to KiCad Integration
 
-Slides: *From Bare Die to Bonded Board: Chip-on-Board Meets KiCad*.
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24370142.svg)](https://doi.org/10.5281/zenodo.24370142)
+
+Slides: *From Bare Die to Bonded Board: Chip-on-Board Meets KiCad*, given at KiCon 2026 in Shenzhen.
 LaTeX Beamer, 16:9.
 
 ## Build
@@ -24,6 +26,12 @@ git push origin v0.1.0
 ```
 
 Pushes to `main` and pull requests only build the PDF and upload it as a workflow artifact.
+
+## Citation
+
+The slides are archived on Zenodo: [10.5281/zenodo.24370142](https://doi.org/10.5281/zenodo.24370142).
+Citation metadata is in [`CITATION.cff`](CITATION.cff). The DOI is printed on the title slide and in the footer;
+it is set once in `slides.tex` as `\talkdoi`.
 
 ## License
 

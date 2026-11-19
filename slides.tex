@@ -35,7 +35,8 @@
 \setbeamertemplate{itemize items}[circle]
 \setbeamerfont{frametitle}{series=\bfseries, size=\Large}
 \setbeamertemplate{footline}{%
-  \hfill\usebeamercolor[fg]{footline}\scriptsize\color{cobgrey}%
+  \usebeamercolor[fg]{footline}\scriptsize\color{cobgrey}%
+  \hspace{1em}doi:\talkdoi\hfill
   CoB to KiCad\quad\insertframenumber/\inserttotalframenumber\hspace{1em}\vspace{0.6em}}
 
 \lstdefinelanguage{cobshell}{morecomment=[l]{\#}}
@@ -50,11 +51,13 @@
 \newcommand{\hl}[1]{{\color{cobgold}\textbf{#1}}}
 
 % ---------- metadata ----------
+% DOI of this talk on Zenodo (reserved before the release, see CITATION.cff)
+\newcommand{\talkdoi}{10.5281/zenodo.24370142}
 \title{From Bare Die to Bonded Board:\\Chip-on-Board Meets KiCad}
 \subtitle{Describe the chip once, generate the rest}
 \author{Stephan Bökelmann}
 \institute{\texttt{maxclerkwell.tech}}
-\date{\today}
+\date{\today\\[0.8em]{\scriptsize\color{cobgrey}DOI \talkdoi\quad CC BY 4.0}}
 
 \begin{document}
 
