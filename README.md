@@ -1,6 +1,6 @@
 # CoB to KiCad Integration
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24370142.svg)](https://doi.org/10.5281/zenodo.24370142)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24370141.svg)](https://doi.org/10.5281/zenodo.24370141)
 
 Slides: *From Bare Die to Bonded Board: Chip-on-Board Meets KiCad*, given at [KiCon Asia 2026](https://kicon.kicad.org/asia2026/) in Shenzhen on 7 November 2026.
 LaTeX Beamer, 16:9.
@@ -29,7 +29,8 @@ Pushes to `main` and pull requests only build the PDF and upload it as a workflo
 
 ## Citation
 
-The slides are archived on Zenodo: [10.5281/zenodo.24370142](https://doi.org/10.5281/zenodo.24370142).
+The slides are archived on Zenodo: [10.5281/zenodo.24370141](https://doi.org/10.5281/zenodo.24370141).
+This DOI covers all versions and always resolves to the latest one.
 Citation metadata is in [`CITATION.cff`](CITATION.cff). The DOI is printed on the title slide and in the footer;
 it is set once in `slides.tex` as `\talkdoi`.
 
