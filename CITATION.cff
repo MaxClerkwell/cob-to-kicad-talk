@@ -6,7 +6,7 @@ authors:
     given-names: Stephan
     orcid: "https://orcid.org/0000-0002-2119-0064"
     affiliation: "nabla B Ingenieurbüro und Dienstleistungs-UG (haftungsbeschränkt), Bochum, Germany"
-version: 1.1.0
+version: 1.1.1
 doi: 10.5281/zenodo.24370142
 date-released: 2026-11-19
 license: CC-BY-4.0
@@ -26,6 +26,10 @@ preferred-citation:
   doi: 10.5281/zenodo.24370142
   url: "https://doi.org/10.5281/zenodo.24370142"
   conference:
-    name: "KiCon 2026"
+    name: "KiCon Asia 2026"
+    location: "Huaqiang Plaza Hotel"
     city: Shenzhen
     country: CN
+    date-start: 2026-11-06
+    date-end: 2026-11-07
+    website: "https://kicon.kicad.org/asia2026/"
